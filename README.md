@@ -1,4 +1,3 @@
-# Checkers
 This is a basic implementation of checkers.
 
 There are two heuristics implemented, the more complex one is active by default.
