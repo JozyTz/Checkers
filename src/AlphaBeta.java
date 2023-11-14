@@ -17,7 +17,7 @@ public class AlphaBeta
         {
             return moves.get(0);
         }
-        for (maxDepth = 0; maxDepth < 5; maxDepth++)
+        for (maxDepth = 1; maxDepth <= 7; maxDepth++)
         {
             depthMoves = new ArrayList<>();
             int bestValue = Integer.MIN_VALUE;
@@ -25,7 +25,7 @@ public class AlphaBeta
             {
                 GameHelper tmpBoard = new GameHelper(game.gameBoard);
                 tmpBoard.executeMove(move);
-                int min = minValue(tmpBoard, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, playerTurn);
+                int min = minValue(tmpBoard, Integer.MIN_VALUE, Integer.MAX_VALUE, 1, playerTurn);
                 if (min == bestValue)
                 {
                     move.moveVal = min;
@@ -43,15 +43,24 @@ public class AlphaBeta
                     break;
                 }
             }
-            Random random = new Random();
-            int bestMoveIndex = random.nextInt(depthMoves.size());
-            bestMove = depthMoves.get(bestMoveIndex);
+            bestMove = getBestMove(depthMoves);
         }
         //for debugging
         for (Move move: depthMoves) {
             System.out.println(move.xCurrent + " " + move.yCurrent + " " + move.xNext + " " + move.yNext + " val:" + move.moveVal);
         }
         return bestMove;
+    }
+
+    private Move getBestMove(List<Move> moves)
+    {
+        if (!moves.isEmpty())
+        {
+            Random random = new Random();
+            int bestMoveIndex = random.nextInt(moves.size());
+            return moves.get(bestMoveIndex);
+        }
+        return null;
     }
 
     public int getValueNeighbors(GameHelper game, int x, int y)
@@ -167,7 +176,7 @@ public class AlphaBeta
         {
             moves = Arrays.asList(game.getMoves(playerTurn));
         }
-        if (moves.size() == 0 || depth == maxDepth)
+        if (moves == null || moves.isEmpty() || depth == maxDepth)
         {
             return moveEvaluator(game);
         }
@@ -193,7 +202,7 @@ public class AlphaBeta
         {
             moves = Arrays.asList(game.getMoves(playerTurn));
         }
-        if (moves.size() == 0 || depth == maxDepth)
+        if (moves == null || moves.isEmpty() || depth == maxDepth)
         {
             return moveEvaluator(game);
         }

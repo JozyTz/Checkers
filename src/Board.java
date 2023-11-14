@@ -85,13 +85,16 @@ public class Board extends JPanel implements MouseListener
         {
             //exit on no ai moves
             this.moves = game.getMoves(playerTurn);
-            if (this.moves == null) {
+            if (this.moves == null || this.moves.length == 0) {
                 System.exit(0);
             }
 
             //ai turn
             Move aiMove = aiPlayer.AlphaBeta(game, playerTurn);
-            game.executeMove(aiMove);
+            if (aiMove != null)
+            {
+                game.executeMove(aiMove);
+            }
             if (aiMove.isJump())
             {
                 this.moves = game.getMoves(playerTurn, aiMove.xNext, aiMove.yNext);
@@ -119,6 +122,8 @@ public class Board extends JPanel implements MouseListener
     @Override
     public void paintComponent(Graphics graphics)
     {
+        Graphics2D g2d = (Graphics2D) graphics.create();
+
         //draw board and pieces
         for (int i = 0; i < 8; i++)
         {
@@ -126,58 +131,53 @@ public class Board extends JPanel implements MouseListener
             {
                 if ( i % 2 == j % 2 )
                 {
-                    graphics.setColor(Color.lightGray);
+                    g2d.setColor(Color.lightGray);
                 }
                 else
                 {
-                    graphics.setColor(Color.gray);
+                    g2d.setColor(Color.gray);
                 }
-                graphics.fillRect(j * 50, i * 50, 50, 50);
+                g2d.fillRect(j * 50, i * 50, 50, 50);
                 if (game.gameBoard[i][j] == GameHelper.RED || game.gameBoard[i][j] == GameHelper.RED_DOUBLE)
                 {
-                    graphics.setColor(Color.red);
-                    graphics.fillOval(j * 50, i * 50, 40, 40);
+                    g2d.setColor(Color.red);
+                    g2d.fillOval(j * 50 + 4, i * 50 + 4, 39, 39);
                     if (game.gameBoard[i][j] == GameHelper.RED_DOUBLE) {
-                        graphics.setColor(Color.pink);
-                        graphics.fillOval(j * 50 + 5, i * 50 + 5, 30, 30);
+                        g2d.setColor(Color.pink);
+                        g2d.fillOval(j * 50 + 8, i * 50 + 8, 31, 31);
                     }
                 }
                 if (game.gameBoard[i][j] == GameHelper.BLACK || game.gameBoard[i][j] == GameHelper.BLACK_DOUBLE)
                 {
-                    graphics.setColor(Color.black);
-                    graphics.fillOval(j * 50, i * 50, 40, 40);
+                    g2d.setColor(Color.black);
+                    g2d.fillOval(j * 50 + 4, i * 50 + 4, 39, 39);
                     if (game.gameBoard[i][j] == GameHelper.BLACK_DOUBLE)
                     {
-                        graphics.setColor(Color.darkGray);
-                        graphics.fillOval(j * 50 + 5, i * 50 + 5, 30, 30);
+                        g2d.setColor(Color.darkGray);
+                        g2d.fillOval(j * 50 + 8, i * 50 + 8, 31, 31);
                     }
                 }
             }
         }
         //movable pieces
-        graphics.setColor(Color.blue);
+        g2d.setColor(Color.blue);
+        g2d.setStroke(new BasicStroke(3.0f));
         for (Move move : moves)
         {
-            graphics.drawRect(2 + move.yCurrent * 50, 2 + move.xCurrent * 50, 48, 48);
-            graphics.drawRect(2 + move.yCurrent * 50, 2 + move.xCurrent * 50, 47, 47);
-            graphics.drawRect(2 + move.yCurrent * 50, 2 + move.xCurrent * 50, 46, 46);
-            graphics.drawRect(2 + move.yCurrent * 50, 2 + move.xCurrent * 50, 45, 45);
+            g2d.drawRect(1 + move.yCurrent * 50, 1 + move.xCurrent * 50, 47, 47);
         }
         //selected piece
         if (selectedX >= 0)
         {
-            graphics.setColor(Color.cyan);
-            graphics.drawRect(2 + selectedY * 50, 2 + selectedX * 50, 48, 48);
-            graphics.drawRect(2 + selectedY * 50, 2 + selectedX * 50, 47, 47);
-            graphics.drawRect(2 + selectedY * 50, 2 + selectedX * 50, 46, 46);
-            graphics.drawRect(2 + selectedY * 50, 2 + selectedX * 50, 45, 45);
+            g2d.setColor(Color.cyan);
+            g2d.drawRect(1 + selectedY * 50, 1 + selectedX * 50, 47, 47);
             //moves available for piece
             for (Move move : moves)
             {
-                graphics.setColor(Color.green);
+                g2d.setColor(Color.green);
                 if (move.yCurrent == selectedY && move.xCurrent == selectedX)
                 {
-                    graphics.fillRect(move.yNext * 50, move.xNext * 50, 50, 50);
+                    g2d.fillRect(move.yNext * 50, move.xNext * 50, 50, 50);
                 }
             }
         }

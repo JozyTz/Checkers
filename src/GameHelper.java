@@ -51,6 +51,10 @@ public class GameHelper
 
     boolean executeMove(Move move)
     {
+        if (move == null)
+        {
+            return false;
+        }
         int xCurrent = move.xCurrent;
         int yCurrent = move.yCurrent;
         int xNext = move.xNext;
@@ -272,7 +276,7 @@ public class GameHelper
         }
         else
         {
-            return null;
+            return new Move[0];
         }
     }
 
